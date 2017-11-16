@@ -14,7 +14,7 @@ import (
 
 var (
 	PORT          = flag.String("port", ":8080", "Http port listen address.")
-	cpus          = flag.Int("cpus", 2, "Number of CPUs. Use `nproc` on linux to find your number of cores.")
+	CPUS          = flag.Int("cpus", 2, "Number of CPUs. Use `nproc` on linux to find your number of cores.")
 	INCLUDE_ASCII = flag.Bool("ascii", false, "Include ascii chars into string analysis")
 	USE_BROWSER   = flag.Bool("browser", false, "Automatically open browser on localhost:port")
 )
@@ -25,7 +25,7 @@ const (
 
 func main() {
 	flag.Parse()
-	runtime.GOMAXPROCS(*cpus)
+	runtime.GOMAXPROCS(*CPUS)
 
 	if err := run(); err != nil {
 		log.Fatal(err)
@@ -94,6 +94,9 @@ func inspectString(s string) string {
 		if unicode.IsLower(c) {
 			out += fmt.Sprintf("\n\t\t\t<tr><td></td><td>is lower case code point</td></tr>")
 		}
+		if unicode.IsUpper(c) {
+			out += fmt.Sprintf("\n\t\t\t<tr><td></td><td>is upper case code point</td></tr>")
+		}
 		if unicode.IsMark(c) {
 			out += fmt.Sprintf("\n\t\t\t<tr><td></td><td>is mark code point</td></tr>")
 		}
@@ -117,9 +120,6 @@ func inspectString(s string) string {
 		}
 		if unicode.IsTitle(c) {
 			out += fmt.Sprintf("\n\t\t\t<tr><td></td><td>is title case code point</td></tr>")
-		}
-		if unicode.IsUpper(c) {
-			out += fmt.Sprintf("\n\t\t\t<tr><td></td><td>is upper case code point</td></tr>")
 		}
 
 		out += fmt.Sprintf("\n")
