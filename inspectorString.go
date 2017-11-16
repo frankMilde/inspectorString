@@ -13,8 +13,10 @@ import (
 )
 
 var (
-	listenAddr = flag.String("port", ":8080", "Http port listen address.")
-	cpus       = flag.Int("cpus", 2, "Number of CPUs. Use `nproc` on linux to find your number of cores.")
+	PORT          = flag.String("port", ":8080", "Http port listen address.")
+	cpus          = flag.Int("cpus", 2, "Number of CPUs. Use `nproc` on linux to find your number of cores.")
+	INCLUDE_ASCII = flag.Bool("ascii", false, "Include ascii chars into string analysis")
+	USE_BROWSER   = flag.Bool("browser", false, "Automatically open browser on localhost:port")
 )
 
 const (
@@ -32,15 +34,14 @@ func main() {
 }
 
 func run() error {
-
-	url := "localhost" + *listenAddr
+	url := "localhost" + *PORT
 	browserIsRunning := startBrowser(url)
 
 	err := runServer()
 
-	// server runs, but browser could not be started
+	// server runs, but browser was not be started
 	if err == nil && browserIsRunning == false {
-		log.Println("inspector string now listening on port", *listenAddr)
+		log.Println("inspector string now listening on port", *PORT)
 	}
 
 	return err
@@ -49,6 +50,10 @@ func run() error {
 // startBrowser tries to open the URL in a browser, and returns
 // whether it succeed.
 func startBrowser(url string) bool {
+	if !*USE_BROWSER {
+		return false
+	}
+
 	var args []string
 	switch runtime.GOOS {
 	case "darwin":
@@ -65,9 +70,11 @@ func startBrowser(url string) bool {
 }
 
 func inspectString(s string) string {
-
 	out := fmt.Sprintf("\t\t<table>\n")
 	for index, c := range s {
+		if isAscii(c) && !*INCLUDE_ASCII {
+			continue
+		}
 		link := fmt.Sprintf("<td><a href=\""+getInfoPage(c)+"\"> %#U </a></td> ", c)
 		out += fmt.Sprintf("\t\t\t<tr>%v <td>starts at byte position %v</td></tr>\n", link, index)
 		out += fmt.Sprintf("\t\t\t<tr><td></td><td>is hex byte [% x] </td></tr>", getHexBytes(c))
@@ -114,6 +121,7 @@ func inspectString(s string) string {
 		if unicode.IsUpper(c) {
 			out += fmt.Sprintf("\n\t\t\t<tr><td></td><td>is upper case code point</td></tr>")
 		}
+
 		out += fmt.Sprintf("\n")
 	}
 	out += fmt.Sprintf("\t\t</table>\n")
@@ -121,9 +129,14 @@ func inspectString(s string) string {
 	return out
 }
 
+func isAscii(r rune) bool {
+	return r > 31 && r < 127
+}
+
 func getHexBytes(r rune) []byte {
 	buf := make([]byte, utf8.RuneLen(r))
 	utf8.EncodeRune(buf, r)
+
 	return buf
 }
 
