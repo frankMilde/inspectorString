@@ -10,6 +10,14 @@ Inspector String analyses the string and breaks it apart into its
 constituent code points offering a link with further information to each
 code point.
 
+Let's have fun with
+```
+Ὂg̀9! ℃ᾭG 👏$⌘語❉☹∳Ж
+```
+
+![Inspector](images/form.png)
+![Analysis](images/result.png)
+
 ## Usage
 
 ```
