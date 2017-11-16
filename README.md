@@ -32,6 +32,18 @@ $ inspectorString -browser -port=":7070"
 starts the web service on port `:7070` and automatically opens a browser
 with a tab on that port.
 
+## Build
+
+```
+go get -v github.com/frankMilde/inspectorString
+go get -v github.com/go-zoo/bone
+```
+
+The binary was statically linked using
+
+```
+go build -ldflags "-linkmode external -extldflags -static"
+```
 
 ## References
 
