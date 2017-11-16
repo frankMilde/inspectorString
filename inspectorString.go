@@ -13,9 +13,8 @@ import (
 )
 
 var (
-	listenAddr = flag.String("http", ":8080", "Http listen address.")
+	listenAddr = flag.String("port", ":8080", "Http port listen address.")
 	cpus       = flag.Int("cpus", 2, "Number of CPUs. Use `nproc` on linux to find your number of cores.")
-	STRING     = flag.String("string", "\b5Ὂg̀9! ℃ᾭG 👏$⌘語❉☹∳Жm f", "String to analyze")
 )
 
 const (
@@ -50,7 +49,6 @@ func run() error {
 // startBrowser tries to open the URL in a browser, and returns
 // whether it succeed.
 func startBrowser(url string) bool {
-	// try to start the browser
 	var args []string
 	switch runtime.GOOS {
 	case "darwin":
@@ -68,13 +66,12 @@ func startBrowser(url string) bool {
 
 func inspectString(s string) string {
 
-	var out string
-
-	out += fmt.Sprintf("\t\t<table>\n")
+	out := fmt.Sprintf("\t\t<table>\n")
 	for index, c := range s {
 		link := fmt.Sprintf("<td><a href=\""+getInfoPage(c)+"\"> %#U </a></td> ", c)
 		out += fmt.Sprintf("\t\t\t<tr>%v <td>starts at byte position %v</td></tr>\n", link, index)
 		out += fmt.Sprintf("\t\t\t<tr><td></td><td>is hex byte [% x] </td></tr>", getHexBytes(c))
+
 		if unicode.IsControl(c) {
 			out += fmt.Sprintf("\n\t\t\t<tr><td></td><td>is control code point</td></tr>")
 		}
@@ -122,7 +119,6 @@ func inspectString(s string) string {
 	out += fmt.Sprintf("\t\t</table>\n")
 
 	return out
-
 }
 
 func getHexBytes(r rune) []byte {
