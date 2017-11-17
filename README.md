@@ -35,8 +35,8 @@ with a tab on that port.
 ## Build
 
 ```
-go get -v github.com/frankMilde/inspectorString
-go get -v github.com/go-zoo/bone
+go get -u github.com/frankMilde/inspectorString
+go get -u github.com/go-zoo/bone
 ```
 
 The binary was statically linked using
